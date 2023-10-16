@@ -1,0 +1,337 @@
+# projetos
+#Calculadora de notas
+#Este código pede ao usuário que digite as quatro notas do aluno e, em seguida, calcula a média das notas. Depois, ele verifica a média e atribui uma nota correspondente (A, B, C, D ou F) de acordo com a tabela de notas.
+notas = []
+for i in range(4):
+    nota = float(input("Digite a nota {}: ".format(i+1)))
+    notas.append(nota)
+
+media = sum(notas) / len(notas)
+
+if media >= 9:
+    nota = "A"
+elif media >= 7.5:
+    nota = "B"
+elif media >= 6:
+    nota = "C"
+elif media >= 4:
+    nota = "D"
+else:
+    nota = "F"
+
+print("A média do aluno é {:.1f} e a nota correspondente é {}.".format(media, nota))
+
+#Agenda de contatos
+#Este código permite ao usuário adicionar, listar, buscar e remover contatos em uma agenda. Os contatos são armazenados em um arquivo CSV e as operações são realizadas por meio de um menu de opções.
+import csv
+
+def adicionar_contato():
+    nome = input("Digite o nome do contato: ")
+    telefone = input("Digite o telefone do contato: ")
+    email = input("Digite o email do contato: ")
+    with open("contatos.csv", "a", newline="") as arquivo:
+        escritor = csv.writer(arquivo)
+        escritor.writerow([nome, telefone, email])
+    print("Contato adicionado com sucesso!")
+
+def listar_contatos():
+    with open("contatos.csv", "r") as arquivo:
+        leitor = csv.reader(arquivo)
+        for linha in leitor:
+            print("Nome: ", linha[0])
+            print("Telefone: ", linha[1])
+            print("Email: ", linha[2])
+            print("--------------------")
+
+def buscar_contato():
+    nome = input("Digite o nome do contato que deseja buscar: ")
+    with open("contatos.csv", "r") as arquivo:
+        leitor = csv.reader(arquivo)
+        for linha in leitor:
+            if linha[0] == nome:
+                print("Nome: ", linha[0])
+                print("Telefone: ", linha[1])
+                print("Email: ", linha[2])
+                break
+        else:
+            print("Contato não encontrado!")
+
+def remover_contato():
+    nome = input("Digite o nome do contato que deseja remover: ")
+    with open("contatos.csv", "r") as arquivo:
+        leitor = csv.reader(arquivo)
+        contatos = list(leitor)
+    with open("contatos.csv", "w", newline="") as arquivo:
+        escritor = csv.writer(arquivo)
+        for contato in contatos:
+            if contato[0] != nome:
+                escritor.writerow(contato)
+    print("Contato removido com sucesso!")
+
+while True:
+    print("1 - Adicionar contato")
+    print("2 - Listar contatos")
+    print("3 - Buscar contato")
+    print("4 - Remover contato")
+    print("5 - Sair")
+    opcao = int(input("Digite uma opção: "))
+    if opcao == 1:
+        adicionar_contato()
+    elif opcao == 2:
+        listar_contatos()
+    elif opcao == 3:
+        buscar_contato()
+    elif opcao == 4:
+        remover_contato()
+    elif opcao == 5:
+        break
+    else:
+        print("Opção inválida!")
+
+#Jogo da forca
+#Este código escolhe uma palavra aleatória de uma lista e permite que o jogador adivinhe as letras. O jogador tem seis tentativas para acertar a palavra e, a cada tentativa, o programa exibe as letras já acertadas e as letras erradas.
+import random
+
+palavras = ["abacaxi", "banana", "caju", "damasco", "figo", "goiaba", "laranja", "manga", "pera", "uva"]
+palavra = random.choice(palavras)
+letras_certas = []
+letras_erradas = []
+tentativas = 6
+
+while True:
+    for letra in palavra:
+        if letra in letras_certas:
+            print(letra, end=" ")
+        else:
+            print("_", end=" ")
+    print()
+
+    if tentativas == 0:
+        print("Você perdeu! A palavra era", palavra)
+        break
+
+    letra_digitada = input("Digite uma letra: ")
+    if letra_digitada in letras_certas or letra_digitada in letras_erradas:
+        print("Você já tentou essa letra!")
+    elif letra_digitada in palavra:
+        letras_certas.append(letra_digitada)
+        print("Você acertou!")
+    else:
+        letras_erradas.append(letra_digitada)
+        tentativas -= 1
+        print("Você errou! Restam {} tentativas.".format(tentativas))
+
+    if set(letras_certas) == set(palavra):
+        print("Parabéns! Você ganhou!")
+        break
+
+#Simulador de caixa eletrônico
+#Um programa que simula um caixa eletrônico e permite que os usuários consultem saldo, saquem dinheiro e depositem dinheiro em uma conta fictícia.
+saldo = 1000
+
+while True:
+    print("1 - Consultar saldo")
+    print("2 - Sacar dinheiro")
+    print("3 - Depositar dinheiro")
+    print("4 - Sair")
+    opcao = int(input("Digite uma opção: "))
+    if opcao == 1:
+        print("Seu saldo é de R$ {:.2f}".format(saldo))
+    elif opcao == 2:
+        valor = float(input("Digite o valor que deseja sacar: "))
+        if valor > saldo:
+            print("Saldo insuficiente!")
+        else:
+            saldo -= valor
+            print("Saque realizado com sucesso!")
+    elif opcao == 3:
+        valor = float(input("Digite o valor que deseja depositar: "))
+        saldo += valor
+        print("Depósito realizado com sucesso!")
+    elif opcao == 4:
+        break
+
+#Conversor de moedas
+#Este código usa a API do Fixer.io para obter as taxas de câmbio mais recentes e, em seguida, pede ao usuário que digite a moeda de origem, a moeda de destino e a quantidade a ser convertida. Depois, ele calcula o valor convertido e exibe o resultado.
+import requests
+
+url = "http://data.fixer.io/api/latest"
+api_key = "SUA_API_KEY_AQUI"
+params = {"access_key": api_key}
+
+response = requests.get(url, params=params)
+data = response.json()
+
+moeda_origem = input("Digite a moeda de origem: ")
+moeda_destino = input("Digite a moeda de destino: ")
+quantidade = float(input("Digite a quantidade: "))
+
+cotacao_origem = data["rates"][moeda_origem]
+cotacao_destino = data["rates"][moeda_destino]
+
+valor_convertido = quantidade * cotacao_destino / cotacao_origem
+
+print("{:.2f} {} equivalem a {:.2f} {}".format(quantidade, moeda_origem, valor_convertido, moeda_destino))
+
+#Gerenciador de tarefas
+#Este código permite ao usuário adicionar, listar, marcar como concluída e remover tarefas em um arquivo JSON e as operações são realizadas por meio de um menu de opções.
+import json
+
+def adicionar_tarefa():
+    tarefa = input("Digite a tarefa: ")
+    with open("tarefas.json", "r") as arquivo:
+        dados = json.load(arquivo)
+    dados.append({"tarefa": tarefa, "concluida": False})
+    with open("tarefas.json", "w") as arquivo:
+        json.dump(dados, arquivo)
+    print("Tarefa adicionada com sucesso!")
+
+def listar_tarefas():
+    with open("tarefas.json", "r") as arquivo:
+        dados = json.load(arquivo)
+    for i, tarefa in enumerate(dados):
+        print("{} - {}".format(i+1, tarefa["tarefa"]))
+        if tarefa["concluida"]:
+            print("   (concluída)")
+
+def marcar_tarefa_concluida():
+    with open("tarefas.json", "r") as arquivo:
+        dados = json.load(arquivo)
+    listar_tarefas()
+    indice = int(input("Digite o número da tarefa concluída: ")) - 1
+    dados[indice]["concluida"] = True
+    with open("tarefas.json", "w") as arquivo:
+        json.dump(dados, arquivo)
+    print("Tarefa marcada como concluída!")
+
+def remover_tarefa():
+    with open("tarefas.json", "r") as arquivo:
+        dados = json.load(arquivo)
+    listar_tarefas()
+    indice = int(input("Digite o número da tarefa a ser removida: ")) - 1
+    del dados[indice]
+    with open("tarefas.json", "w") as arquivo:
+        json.dump(dados, arquivo)
+    print("Tarefa removida com sucesso!")
+
+while True:
+    print("1 - Adicionar tarefa")
+    print("2 - Listar tarefas")
+    print("3 - Marcar tarefa como concluída")
+    print("4 - Remover tarefa")
+    print("5 - Sair")
+    opcao = int(input("Digite uma opção: "))
+    if opcao == 1:
+        adicionar_tarefa()
+    elif opcao == 2:
+        listar_tarefas()
+    elif opcao == 3:
+        marcar_tarefa_concluida()
+    elif opcao == 4:
+        remover_tarefa()
+    elif opcao == 5:
+        break
+    else:
+        print("Opção inválida!")
+
+#Adivinhe o número
+#Este código gera um número aleatório entre 1 e 100 e pede ao usuário que adivinhe o número. A cada tentativa, o programa fornece uma dica (maior/menor) e, quando o usuário acerta o número, o programa exibe o número de tentativas.
+import random
+
+numero_aleatorio = random.randint(1, 100)
+tentativas = 0
+
+while True:
+    tentativa = int(input("Digite um número entre 1 e 100: "))
+    tentativas += 1
+    if tentativa < numero_aleatorio:
+        print("O número é maior!")
+    elif tentativa > numero_aleatorio:
+        print("O número é menor!")
+    else:
+        print("Parabéns! Você acertou em {} tentativas!".format(tentativas))
+        break
+
+#Calculadora de IMC
+#Este código pede ao usuário que digite sua altura e peso e, em seguida, calcula o IMC correspondente. Depois, ele verifica o IMC e atribui uma categoria correspondente (abaixo do peso, peso normal, sobrepeso, obesidade grau 1, obesidade grau 2 ou obesidade grau 3) de acordo com a tabela de IMC.
+altura = float(input("Digite sua altura em metros: "))
+peso = float(input("Digite seu peso em quilogramas: "))
+
+imc = peso / altura ** 2
+
+if imc < 18.5:
+    categoria = "Abaixo do peso"
+elif imc < 25:
+    categoria = "Peso normal"
+elif imc < 30:
+    categoria = "Sobrepeso"
+elif imc < 35:
+    categoria = "Obesidade grau 1"
+elif imc < 40:
+    categoria = "Obesidade grau 2"
+else:
+    categoria = "Obesidade grau 3"
+
+print("Seu IMC é {:.2f} e sua categoria é {}.".format(imc, categoria))
+
+#Sistema de reservas de cinema
+#Este código permite ao usuário escolher um filme, um horário e comprar um ingresso. Os dados das reservas são armazenados em um arquivo de texto e as operações são realizadas por meio de um menu de opções.
+import json
+
+def listar_filmes():
+    with open("filmes.json", "r") as arquivo:
+        dados = json.load(arquivo)
+    for i, filme in enumerate(dados):
+        print("{} - {}".format(i+1, filme["titulo"]))
+
+def escolher_filme():
+    with open("filmes.json", "r") as arquivo:
+        dados = json.load(arquivo)
+    listar_filmes()
+    indice = int(input("Digite o número do filme escolhido: ")) - 1
+    return dados[indice]
+
+def escolher_horario():
+    horarios = ["10:00", "14:00", "18:00", "22:00"]
+    for i, horario in enumerate(horarios):
+        print("{} - {}".format(i+1, horario))
+    indice = int(input("Digite o número do horário escolhido: ")) - 1
+    return horarios[indice]
+
+def comprar_ingresso(filme, horario):
+    with open("reservas.txt", "a") as arquivo:
+        arquivo.write("{} - {}\n".format(filme, horario))
+    print("Ingresso comprado com sucesso!")
+
+while True:
+    print("1 - Escolher filme")
+    print("2 - Comprar ingresso")
+    print("3 - Sair")
+    opcao = int(input("Digite uma opção: "))
+    if opcao == 1:
+        escolha = escolher_filme()
+        print("Filme escolhido: {}".format(escolha["titulo"]))
+    elif opcao == 2:
+        filme = escolha["titulo"]
+        horario = escolher_horario()
+        comprar_ingresso(filme, horario)
+    elif opcao == 3:
+        break
+    else:
+        print("Opção inválida!")
+
+#Aplicativo de previsão do tempo
+#Este código usa a API do OpenWeatherMap para obter a previsão do tempo para uma cidade e, em seguida, exibe a temperatura e a descrição do tempo. O usuário deve digitar o nome da cidade e a API key deve ser obtida no site do OpenWeatherMap.
+import requests
+
+cidade = input("Digite o nome da cidade: ")
+url = "http://api.openweathermap.org/data/2.5/weather"
+params = {"q": cidade, "appid": "SUA_API_KEY_AQUI", "units": "metric"}
+
+response = requests.get(url, params=params)
+data = response.json()
+
+temperatura = data["main"]["temp"]
+descricao = data["weather"][0]["description"]
+
+print("A temperatura em {} é de {:.1f}°C e o tempo está {}".format(cidade, temperatura, descricao))
